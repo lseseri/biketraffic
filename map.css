@@ -29,3 +29,25 @@ svg circle {
     stroke: white;
     pointer-events: auto;
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    align-items: baseline;
+    width: 100%;
+}
+label {
+    margin-left: auto;
+}
+time {
+    display: block;
+}
+em {
+    color: #888;
+    font-style: italic;
+}
+#time-slider {
+    width: 100%;
+    max-width: 400px;
+}

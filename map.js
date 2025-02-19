@@ -13,6 +13,10 @@ const map = new mapboxgl.Map({
 
 let stations = [];
 let trips = [];
+let filteredTrips = [];
+let filteredArrivals = new Map();
+let filteredDepartures = new Map();
+let filteredStations = [];
 
 map.on('load', () => { 
     // add bike routes for boston
@@ -52,15 +56,10 @@ map.on('load', () => {
     // Load the nested JSON file
     const jsonurl = "https://dsc106.com/labs/lab07/data/bluebikes-stations.json";
     d3.json(jsonurl).then(jsonData => {
-        // console.log('Loaded JSON Data:', jsonData);  // Log to verify structure
-
         stations = jsonData.data.stations;
-        // console.log('Stations Array:', stations);
 
         const csvurl = "https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv";
         d3.csv(csvurl).then(trips => {
-            // console.log('Loaded CSV Data:', trips);  // Log to verify structure
-
             departures = d3.rollup(
                 trips,
                 (v) => v.length,
@@ -79,7 +78,6 @@ map.on('load', () => {
                 station.totalTraffic = station.arrivals + station.departures;
                 return station;
             });
-            // console.log(stations);
 
             const radiusScale = d3
                 .scaleSqrt()
@@ -93,8 +91,6 @@ map.on('load', () => {
                 .enter()
                 .append('circle')
                 .attr('r', d => radiusScale(d.totalTraffic))  // Radius of the circle
-                // .attr('fill', 'steelblue')  // Circle fill color
-                // .attr('stroke', 'white')    // Circle border color
                 .attr('stroke-width', 1)    // Circle border thickness
                 .attr('opacity', 0.8)      // Circle opacity
                 .each(function(d) {
@@ -133,3 +129,30 @@ function getCoords(station) {
     const { x, y } = map.project(point);  // Project to pixel coordinates
     return { cx: x, cy: y };  // Return as object for use in SVG attributes
 }
+
+let timeFilter = -1;
+
+const timeSlider = document.getElementById('time-slider');
+const selectedTime = document.getElementById('selected-time');
+const anyTimeLabel = document.getElementById('any-time');
+
+function formatTime(minutes) {
+    const date = new Date(0, 0, 0, 0, minutes);  // Set hours & minutes
+    return date.toLocaleString('en-US', { timeStyle: 'short' }); // Format as HH:MM AM/PM
+}
+
+function updateTimeDisplay() {
+    timeFilter = Number(timeSlider.value);  // Get slider value
+  
+    if (timeFilter === -1) {
+        selectedTime.textContent = '';  // Clear time display
+        anyTimeLabel.style.display = 'block';  // Show "(any time)"
+    } else {
+        selectedTime.textContent = formatTime(timeFilter);  // Display formatted time
+        anyTimeLabel.style.display = 'none';  // Hide "(any time)"
+    }
+    // filterTripsByTime();
+}
+
+timeSlider.addEventListener('input', updateTimeDisplay);
+updateTimeDisplay();
