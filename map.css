@@ -22,3 +22,10 @@ html, body {
     height: 100%;
     pointer-events: none;
 }
+
+svg circle {
+    fill: steelblue;
+    fill-opacity: 0.6;
+    stroke: white;
+    pointer-events: auto;
+}
