@@ -28,6 +28,46 @@ svg circle {
     fill-opacity: 0.6;
     stroke: white;
     pointer-events: auto;
+    --color-departures: steelblue;
+    --color-arrivals: darkorange;
+    --color: color-mix(
+        in oklch,
+        var(--color-departures) calc(100% * var(--departure-ratio)),
+        var(--color-arrivals)
+    );
+    fill: var(--color);
+}
+
+.legend {
+    --color-departures: steelblue;
+    --color-arrivals: darkorange;
+    --color: color-mix(
+        in oklch,
+        var(--color-departures) calc(100% * var(--departure-ratio)),
+        var(--color-arrivals)
+    );
+    fill: var(--color);
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+    margin-block: 1em;
+}
+.legend > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+.legend > div::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    border-radius: 10px;
+    background-color: color-mix(
+        in oklch,
+        var(--color-departures) calc(100% * var(--departure-ratio)),
+        var(--color-arrivals)
+    );
+    display: inline-block;
 }
 
 header {

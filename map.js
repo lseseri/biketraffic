@@ -170,7 +170,17 @@ function updateCircles () {
 
     const svg = d3.select('#map').select('svg');
     // Append circles to the SVG for each station
-    const circles = svg.selectAll('circle').data(filteredStations, d => d.short_name);
+    const circles = svg.selectAll('circle')
+        .data(filteredStations, d => d.short_name)
+        .style("--departure-ratio", d => stationFlow(d.departures / d.totalTraffic))
+        .style("visibility", d => {
+            // Only show circles if there are trips at the selected time
+            if (timeFilter !== -1) {
+                let stationTrips = filteredDepartures.get(d.short_name) || 0 + filteredArrivals.get(d.short_name) || 0;
+                return stationTrips > 0 ? "visible" : "hidden";  // Hide circles with 0 trips at selected time
+            }
+            return "visible";  // Always visible if no specific time filter
+        });
 
     circles.transition().duration(300).attr('r', d => radiusScale(d.totalTraffic));
 
@@ -229,3 +239,5 @@ function updateTimeDisplay() {
 
 timeSlider.addEventListener('input', updateTimeDisplay);
 updateTimeDisplay();
+
+let stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
